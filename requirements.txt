@@ -1,0 +1,13 @@
+streamlit
+requests
+markdown
+xhtml2pdf
+fastapi
+pydantic
+langchain-openai
+langchain-core
+groq
+python-dotenv
+reportlab
+uvicorn
+python-docx
