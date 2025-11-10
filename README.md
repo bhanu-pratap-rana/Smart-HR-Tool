@@ -1,70 +1,203 @@
-# Smart HR Assistant 🤖
+# Smart HR Tool 🤖
 
-An enterprise-grade AI-powered HR assistant that revolutionizes HR operations with state-of-the-art features and stunning visual animations.
+AI-powered HR document generation tool with dual model support (Ollama + Groq).
 
-## Core Features 🌟
+## Features ✨
 
-- **Job Description Generator** - Create compelling JDs with AI assistance
-- **Offer Letter Generator** - Generate professional offer letters instantly  
-- **Interview Questions** - Get role-specific interview questions
-- **Onboarding Plans** - Design comprehensive onboarding experiences
-- **Performance Reviews** - Generate detailed performance assessments
+- **Job Description Generator** - Create professional job descriptions with AI
+- **Offer Letter Generator** - Generate customized offer letters
+- **Interview Questions Generator** - Get role-specific interview questions
+- **Onboarding Plan Generator** - Design comprehensive onboarding experiences
+- **Performance Review Generator** - Create detailed performance assessments
+- **Document Manager** - View, export (PDF/DOCX), and manage all generated documents
+
+## Architecture 🏗️
+
+```
+Smart-HR-Tool/
+├── backend/           # FastAPI backend
+│   └── app/
+│       ├── api/       # API endpoints
+│       ├── core/      # Core functionality
+│       ├── models/    # Data models
+│       └── services/  # Business logic
+├── frontend/          # Streamlit UI
+│   ├── pages/        # UI pages
+│   └── utils/        # Helper functions
+└── alembic/          # Database migrations
+```
 
 ## Tech Stack 🛠️
 
-### Frontend
-- Streamlit
-- Custom CSS/Animations
-- PDF Generation (xhtml2pdf)
-- Word Doc Support (python-docx)
-- Markdown Processing
+### Backend
+- **FastAPI** - Modern web framework
+- **SQLModel** - Database ORM
+- **Pydantic** - Data validation
+- **Alembic** - Database migrations
 
-### Backend  
-- FastAPI
-- Pydantic
-- OpenAI Integration
-- AsyncIO
-- CORS Middleware
+### Frontend
+- **Streamlit** - Interactive UI
+- **python-docx** - DOCX generation
+- **xhtml2pdf** - PDF generation
 
 ### AI Models
-- HRCraft Mini - Fast responses (Ollama deepseek-r1:8b)
-- HRCraft Pro - Complex tasks (Groq llama-3.3-70b)
+- **HRCraft Mini** (Ollama - deepseek-r1:8b) - Local, slower but free
+- **HRCraft Pro** (Groq - llama-3.3-70b-versatile) - Cloud, fast responses
 
-## Installation ⚡
+## Installation 🚀
 
-1. Clone the repository
+### Prerequisites
+- Python 3.11+
+- [Ollama](https://ollama.ai/) (for local model)
+- Groq API key (get free at [console.groq.com](https://console.groq.com))
+
+### Setup
+
+1. **Clone the repository**
 ```bash
-git clone https://github.com/bytical/smartHR.git
-cd smartHR
+git clone https://github.com/bhanu-pratap-rana/Smart-HR-Tool.git
+cd Smart-HR-Tool
+```
 
+2. **Create virtual environment**
+```bash
+python -m venv venv
+venv\Scripts\activate  # Windows
+# or
+source venv/bin/activate  # Linux/Mac
+```
 
-Install dependencies
+3. **Install dependencies**
+```bash
 pip install -r requirements.txt
+```
 
-Configure environment variables in .env for openai and groq:
-OPENAI_API_KEY=your_openai_api_key
-MODEL_NAME=gpt-3.5-turbo
-MAX_TOKENS=1000
-TEMPERATURE=0.7
+4. **Configure environment**
 
-Running the Application 🚀
-First, start the FastAPI backend:
-python fastapi_server.py
+Create a `.env` file in the root directory:
 
-Then launch the Streamlit frontend in a new terminal:
-python -m streamlit run frontapp.py
+```env
+# Application
+ENVIRONMENT=development
+DEBUG=false
+LOG_LEVEL=INFO
 
-Key Libraries 📚
-# Frontend Dependencies
-streamlit==1.24.0
-requests==2.31.0
-python-docx==0.8.11
-xhtml2pdf==0.2.11
-markdown==3.4.3
+# Ollama (Local AI)
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=deepseek-r1:8b
+OLLAMA_TEMPERATURE=0.7
+OLLAMA_MAX_TOKENS=2000
 
-# Backend Dependencies
-fastapi==0.100.0
-uvicorn==0.22.0
-python-dotenv==1.0.0
-openai==0.27.8
-pydantic==2.0.2
+# Groq (Cloud AI)
+GROQ_API_KEY=your_groq_api_key_here
+GROQ_MODEL=llama-3.3-70b-versatile
+GROQ_TEMPERATURE=0.7
+GROQ_MAX_TOKENS=2000
+```
+
+5. **Install Ollama model** (for local AI)
+```bash
+ollama pull deepseek-r1:8b
+```
+
+6. **Initialize database**
+```bash
+alembic upgrade head
+```
+
+## Running the Application 🎯
+
+### Option 1: Using batch scripts (Windows)
+
+**Start Backend:**
+```bash
+start_backend.bat
+```
+
+**Start Frontend** (in new terminal):
+```bash
+start_frontend.bat
+```
+
+### Option 2: Manual start
+
+**Backend:**
+```bash
+venv\Scripts\activate
+uvicorn backend.app.main:app --reload
+```
+
+**Frontend:**
+```bash
+venv\Scripts\activate
+streamlit run frontend/app.py
+```
+
+## Access Points 🌐
+
+- **Frontend UI**: http://localhost:8501
+- **Backend API**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
+- **Health Check**: http://localhost:8000/health
+
+## API Endpoints 📡
+
+- `POST /api/v1/job-description/generate` - Generate job description
+- `POST /api/v1/offer-letter/generate` - Generate offer letter
+- `POST /api/v1/interview-questions/generate` - Generate interview questions
+- `POST /api/v1/onboarding/generate` - Generate onboarding plan
+- `POST /api/v1/performance-review/generate` - Generate performance review
+- `GET /api/v1/documents` - List all documents
+- `DELETE /api/v1/documents/{id}` - Delete document
+- `GET /api/v1/export/pdf/{id}` - Export as PDF
+- `GET /api/v1/export/docx/{id}` - Export as DOCX
+
+## Development 💻
+
+### Project Structure
+
+```
+backend/app/
+├── api/v1/endpoints/    # API route handlers
+├── core/                # Exception handlers, utilities
+├── models/              # Pydantic models & database models
+├── services/            # Business logic (AI, rendering, etc.)
+└── main.py             # FastAPI application
+
+frontend/
+├── pages/              # Streamlit pages
+├── utils/              # Helper functions
+└── app.py             # Main Streamlit app
+
+alembic/
+└── versions/          # Database migration files
+```
+
+### Adding New Features
+
+1. Create database model in `backend/app/models/database.py`
+2. Create request/response models in `backend/app/models/requests.py` & `responses.py`
+3. Create endpoint in `backend/app/api/v1/endpoints/`
+4. Register route in `backend/app/api/v1/router.py`
+5. Create UI page in `frontend/pages/`
+6. Add page to navigation in `frontend/app.py`
+
+## Contributing 🤝
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License 📄
+
+This project is licensed under the MIT License.
+
+## Support 💬
+
+For issues and questions, please open an issue on GitHub.
+
+---
+
+**Built with ❤️ using FastAPI, Streamlit, and AI**
