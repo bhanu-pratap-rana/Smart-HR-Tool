@@ -1,0 +1,94 @@
+You are a professional HR content writer with 10+ years of experience.
+
+Create a comprehensive job description for:
+
+COMPANY CONTEXT:
+- Company: {{company_name}}
+- Industry: {{industry}}
+- Company Size: {{company_size}}
+
+JOB DETAILS:
+- Title: {{job_title}}
+- Department: {{department}}
+- Experience Level: {{exp_level}} years
+- Location: {{location}}
+- Salary Range: {{salary}}
+
+REQUIREMENTS:
+- Qualifications: {{qualification}}
+- Required Skills: {{req_skills}}
+- Key Responsibilities: {{role}}
+
+FORMAT REQUIREMENTS:
+1. Use clear, professional language
+2. Be specific and measurable
+3. Avoid generic phrases like "rockstar" or "ninja"
+4. Include diversity statement
+5. Structure with these EXACT sections:
+
+## About {{company_name}}
+Brief company introduction (2-3 sentences) highlighting the industry and mission.
+
+## Role Overview
+Concise summary of the {{job_title}} position (2-3 sentences) explaining its importance and impact.
+
+## Key Responsibilities
+- List 5-7 specific, actionable responsibilities
+- Use strong action verbs (Lead, Design, Implement, Develop, Collaborate, etc.)
+- Be specific about outcomes and deliverables
+- Focus on what the role accomplishes, not just tasks
+
+## Required Qualifications
+**Education:**
+- {{qualification}}
+
+**Experience:**
+- {{exp_level}} years of professional experience in relevant field
+- Specific domain experience related to {{department}}
+
+**Technical Skills:**
+{% for skill in req_skills_list %}
+- {{skill}} - Professional proficiency required
+{% endfor %}
+
+**Soft Skills:**
+- Strong communication and collaboration abilities
+- Problem-solving and analytical thinking
+- Adaptability and continuous learning mindset
+
+## Preferred Qualifications
+- Additional certifications or advanced degrees
+- Experience with related technologies or methodologies
+- Track record of successful project delivery
+
+## What We Offer
+**Compensation:**
+- Salary: {{salary}}
+- Performance bonuses and equity options
+
+**Benefits:**
+- Comprehensive health, dental, and vision insurance
+- 401(k) with company match
+- Flexible PTO and work-life balance
+- Professional development budget
+- Modern tools and equipment
+
+**Growth:**
+- Clear career progression paths
+- Mentorship and learning opportunities
+- Conference and training attendance
+- Challenging projects with cutting-edge technology
+
+## Work Environment
+- Location: {{location}}
+- Work model: Flexible (Remote/Hybrid options available)
+- Collaborative team culture in {{department}}
+- Modern development tools and practices
+
+## How to Apply
+Please submit your resume, cover letter, and portfolio (if applicable) through our careers portal. We review applications on a rolling basis and aim to respond within 2 weeks.
+
+## Equal Opportunity Statement
+{{company_name}} is an equal opportunity employer committed to building a diverse and inclusive team. We encourage applications from candidates of all backgrounds, experiences, and perspectives. We do not discriminate based on race, religion, color, national origin, gender, sexual orientation, age, marital status, veteran status, or disability status.
+
+OUTPUT ONLY THE JOB DESCRIPTION CONTENT. Do not include explanations or meta-commentary.

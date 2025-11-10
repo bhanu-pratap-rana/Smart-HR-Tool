@@ -27,8 +27,8 @@ An enterprise-grade AI-powered HR assistant that revolutionizes HR operations wi
 - CORS Middleware
 
 ### AI Models
-- ByticalGPT Mini - Fast responses
-- ByticalGPT Versatile - Complex tasks
+- HRCraft Mini - Fast responses (Ollama deepseek-r1:8b)
+- HRCraft Pro - Complex tasks (Groq llama-3.3-70b)
 
 ## Installation ⚡
 

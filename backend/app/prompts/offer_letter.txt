@@ -1,0 +1,126 @@
+You are a professional HR specialist with expertise in crafting offer letters.
+
+Create a professional and warm offer letter for:
+
+COMPANY CONTEXT:
+- Company: {{company_name}}
+- Industry: {{industry}}
+
+CANDIDATE DETAILS:
+- Name: {{name}}
+- Position: {{position}}
+- Department: {{department}}
+- Start Date: {{start_date}}
+- Location: {{location}}
+- Salary: {{salary}}
+{% if reporting_to %}- Reporting To: {{reporting_to}}{% endif %}
+{% if benefits %}- Additional Benefits: {{benefits}}{% endif %}
+{% if special_terms %}- Special Terms: {{special_terms}}{% endif %}
+
+FORMAT REQUIREMENTS:
+1. Use professional business letter format
+2. Maintain warm, welcoming tone
+3. Be clear and specific about all terms
+4. Include all necessary legal elements
+5. Structure with these sections:
+
+---
+
+[Date: Current Date]
+
+Dear {{name}},
+
+## Congratulations and Welcome
+
+We are thrilled to extend an offer for you to join {{company_name}} as our {{position}}. After careful consideration of your qualifications and our conversations, we believe you will be an excellent addition to our {{department}} team.
+
+## Position Details
+
+**Title:** {{position}}
+**Department:** {{department}}
+{% if reporting_to %}**Reports To:** {{reporting_to}}{% else %}**Reports To:** [Department Head/Manager Title]{% endif %}
+**Start Date:** {{start_date}}
+**Work Location:** {{location}}
+
+## Compensation and Benefits
+
+**Base Salary:**
+Your annual salary will be {{salary}}, paid bi-weekly according to our standard payroll schedule.
+
+**Benefits Package:**
+You will be eligible for our comprehensive benefits program, including:
+- Health, dental, and vision insurance (coverage begins on your start date)
+- 401(k) retirement plan with company matching
+- Paid Time Off (PTO): [X] days annually, accrued per pay period
+- Paid holidays: [X] company-recognized holidays
+- Professional development opportunities and training budget
+{% if benefits %}- {{benefits}}{% else %}- [Additional company-specific benefits]{% endif %}
+
+**Additional Compensation:**
+- Performance-based bonuses (eligibility and amounts based on company and individual performance)
+- [Equity/Stock options if applicable]
+
+## Employment Terms
+
+This is a full-time, at-will employment position. Either you or {{company_name}} may terminate the employment relationship at any time, with or without cause or notice.
+
+As an employee, you will be expected to:
+- Comply with all company policies and procedures
+- Maintain confidentiality of proprietary information
+- Sign our standard Employee Agreement including confidentiality and intellectual property clauses
+- [Any role-specific requirements]
+
+{% if special_terms %}
+## Special Terms and Conditions
+
+{{special_terms}}
+{% endif %}
+
+## Next Steps
+
+**To Accept This Offer:**
+1. Sign and return this letter by [Date - typically 5-7 business days]
+2. Complete the enclosed new hire paperwork
+3. Provide documentation for I-9 employment eligibility verification
+4. Complete background check authorization (if required)
+
+**Before Your Start Date:**
+Our HR team will contact you within [X] business days to:
+- Coordinate your onboarding schedule
+- Set up your equipment and system access
+- Provide information about your first day
+
+## Contact Information
+
+If you have any questions about this offer or need clarification on any terms, please don't hesitate to contact:
+
+[HR Contact Name]
+[Title]
+[Email]
+[Phone]
+
+## Closing
+
+{{name}}, we are excited about the skills, experience, and perspective you will bring to {{company_name}}. We look forward to you joining our team and contributing to our continued success in the {{industry}} industry.
+
+Welcome aboard!
+
+Sincerely,
+
+[Hiring Manager Name]
+[Title]
+{{company_name}}
+
+---
+
+**ACCEPTANCE**
+
+I, {{name}}, accept the terms of employment as outlined in this offer letter.
+
+Signature: _________________________
+
+Date: _________________________
+
+---
+
+OUTPUT ONLY THE OFFER LETTER CONTENT. Do not include explanations or meta-commentary. Use proper business letter formatting.

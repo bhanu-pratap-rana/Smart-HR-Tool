@@ -4,18 +4,19 @@ import json
 from typing import Dict, Any
 import asyncio
 import aiohttp
-from job_description_generator import job_description_page
-from onboarding_generator import onboarding_plan_page
-from offer_letter_generator import offer_letter_page
-from interview_questions_generator import interview_questions_page
-from performance_review_generator import performance_review_page
+from pages.job_description_generator import job_description_page
+from pages.onboarding_generator import onboarding_plan_page
+from pages.offer_letter_generator import offer_letter_page
+from pages.interview_questions_generator import interview_questions_page
+from pages.performance_review_generator import performance_review_page
+from pages.document_manager import document_manager_page
 
 # API Configuration
 API_BASE_URL = "http://localhost:8000"
 
 # Page configuration
 st.set_page_config(
-    page_title="ByticalGPT | Smart HR Assistant",
+    page_title="HRCraft AI | Smart HR Assistant",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -34,13 +35,14 @@ st.markdown("""
     .feature-card {
         background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
         border-radius: 15px;
-        padding: 25px;
-        margin: 15px;
+        padding: 20px;
+        margin: 10px 0;
         border: 2px solid #333;
         animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         background-size: 200% 200%;
         transition: all 0.4s ease;
         box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        min-height: 200px;
     }
     
     .feature-card:hover {
@@ -58,9 +60,9 @@ st.markdown("""
         background-size: 200% auto;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        font-size: 1.8rem;
+        font-size: 1.3rem;
         font-weight: 700;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
         animation: gradientShift 3s linear infinite;
         transform-origin: left;
         transition: transform 0.3s ease;
@@ -74,9 +76,9 @@ st.markdown("""
     /* Enhanced Description Styling */
     .card-description {
         color: #e0e0e0;
-        font-size: 1.1rem;
-        line-height: 1.6;
-        font-weight: 500;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        font-weight: 400;
         position: relative;
         overflow: hidden;
     }
@@ -99,8 +101,8 @@ st.markdown("""
     
     /* Enhanced Emoji Icon Animation */
     .emoji-icon {
-        font-size: 3rem;
-        margin-bottom: 15px;
+        font-size: 2rem;
+        margin-bottom: 10px;
         animation: float 3s ease-in-out infinite;
         transition: transform 0.3s ease;
     }
@@ -228,11 +230,20 @@ st.markdown("""
 if 'page' not in st.session_state:
     st.session_state.page = 'main'
 if 'model_choice' not in st.session_state:
-    st.session_state.model_choice = 'bytical_mini'
+    st.session_state.model_choice = 'hrcraft_mini'
 if 'form_data' not in st.session_state:
     st.session_state.form_data = {}
 
 # API Integration Functions
+# Map old endpoint names to new API v1 paths
+ENDPOINT_MAPPING = {
+    'generate_jd': 'api/v1/job-description/generate',
+    'generate_offer': 'api/v1/offer-letter/generate',
+    'generate_interview': 'api/v1/interview-questions/generate',
+    'generate_onboarding': 'api/v1/onboarding/generate',
+    'generate_review': 'api/v1/performance-review/generate'
+}
+
 async def call_api(endpoint: str, data: Dict[Any, Any]) -> Dict[str, str]:
     endpoint_data = {
         'generate_jd': {
@@ -285,9 +296,12 @@ async def call_api(endpoint: str, data: Dict[Any, Any]) -> Dict[str, str]:
     }
 
     request_data = endpoint_data.get(endpoint, {})
-    
+
+    # Get the new API v1 path
+    api_path = ENDPOINT_MAPPING.get(endpoint, endpoint)
+
     async with aiohttp.ClientSession() as session:
-        async with session.post(f"{API_BASE_URL}/{endpoint}", json=request_data) as response:
+        async with session.post(f"{API_BASE_URL}/{api_path}", json=request_data) as response:
             if response.status == 200:
                 return await response.json()
             else:
@@ -337,10 +351,14 @@ def render_form_page():
         onboarding_plan_page()
     elif st.session_state.page == 'performance_review':
         performance_review_page()
+    elif st.session_state.page == 'document_manager':
+        document_manager_page()
 
 # Enhanced Sidebar with API Status
 with st.sidebar:
-    st.image("smart_hr.png", width=200)
+    st.markdown("<h1 style='text-align: center; font-size: 3rem;'>🤖</h1>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #FF8C42; font-weight: 700;'>HRCraft AI</h2>", unsafe_allow_html=True)
+    st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown("<h2 style='color: #FF8C42; font-weight: 700;'>Settings</h2>", unsafe_allow_html=True)
     
     try:
@@ -354,27 +372,25 @@ with st.sidebar:
     
     model_choice = st.selectbox(
         "Select AI Model",
-        ["bytical_mini", "bytical_versatile"],
+        ["hrcraft_mini", "hrcraft_pro"],
+        format_func=lambda x: "HRCraft Mini" if x == "hrcraft_mini" else "HRCraft Pro",
         help="Choose between different AI models for content generation"
     )
     st.session_state.model_choice = model_choice
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown("<h3 style='color: #FF8C42; font-weight: 600;'>Model Information</h3>", unsafe_allow_html=True)
-    
-    if model_choice == "bytical_mini":
-        st.info("🚀 ByticalGPT Mini: Optimized for faster responses")
+
+    if model_choice == "hrcraft_mini":
+        st.info("🚀 HRCraft Mini: Optimized for faster responses")
     else:
-        st.info("🌟 ByticalGPT Versatile: Enhanced for complex tasks")
+        st.info("🌟 HRCraft Pro: Enhanced for complex tasks")
 # Main Content with Error Boundary
 try:
-    st.markdown("<h1 style='text-align: center; font-size: 3rem; margin-bottom: 1rem;'>ByticalGPT - Smart HR Assistant</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; font-size: 3rem; margin-bottom: 1rem;'>HRCraft AI - Smart HR Assistant</h1>", unsafe_allow_html=True)
     st.markdown(f"<p style='text-align: center; font-size: 1.2rem; color: #FF8C42; font-weight: 600;'>Currently using: {st.session_state.model_choice}</p>", unsafe_allow_html=True)
     st.markdown("<hr>", unsafe_allow_html=True)
 
     if st.session_state.page == 'main':
-        use_compact = st.checkbox("Compact View", value=False)
-        cols = st.columns(1 if use_compact else 3)
-        
         features = [
             {
                 "title": "Job Description Generator",
@@ -405,12 +421,22 @@ try:
                 "description": "Create detailed performance review templates",
                 "emoji": "📊",
                 "page": "performance_review"
+            },
+            {
+                "title": "Document Manager",
+                "description": "View, export, and manage all generated documents",
+                "emoji": "📚",
+                "page": "document_manager"
             }
         ]
-        
+
+        # Create 2 columns for better responsive layout
+        col1, col2 = st.columns(2)
+
+        # Distribute features across columns
         for i, feature in enumerate(features):
-            with cols[i % len(cols)]:
-                (create_feature_card(**feature))
+            with col1 if i % 2 == 0 else col2:
+                create_feature_card(**feature)
     else:
         render_form_page()
 
@@ -422,8 +448,8 @@ except Exception as e:
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("""
     <div style='text-align: center; padding: 2rem;'>
-        <p style='color: #888; font-size: 1.1rem; font-weight: 500;'>© 2024 ByticalGPT. All rights reserved.</p>
-        <p style='color: #666; font-size: 1rem;'>Powered by AI | Built with ❤️ by <span style='color: #FF8C42; font-weight: 600;'>Bytical</span></p>
+        <p style='color: #888; font-size: 1.1rem; font-weight: 500;'>© 2024 HRCraft AI. All rights reserved.</p>
+        <p style='color: #666; font-size: 1rem;'>Powered by AI | Built with ❤️</p>
     </div>
 """, unsafe_allow_html=True)
 

@@ -4,8 +4,6 @@ from datetime import datetime
 import io
 import markdown
 from xhtml2pdf import pisa
-import base64
-import os
 
 def convert_to_pdf(markdown_text):
     html = markdown.markdown(markdown_text)
@@ -57,6 +55,17 @@ def convert_to_pdf(markdown_text):
         margin-bottom: 5px;
         text-align: justify;
     }
+    .signature-section {
+        margin-top: 50px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .signature {
+        width: 200px;
+        border-top: 1px solid #333333;
+        padding-top: 10px;
+        text-align: center;
+    }
     """
 
     pdf_html = f"""
@@ -67,7 +76,7 @@ def convert_to_pdf(markdown_text):
     </head>
     <body>
         <div class="header">
-            <h1 class="title">Offer Letter</h1>
+            <h1 class="title">Performance Review</h1>
         </div>
         <div class="content">
             {html}
@@ -80,7 +89,7 @@ def convert_to_pdf(markdown_text):
     pdf = pisa.CreatePDF(pdf_html, dest=result)
     return result.getvalue() if not pdf.err else None
 
-def offer_letter_page():
+def performance_review_page():
     st.markdown("""
         <style>
         .stButton button {
@@ -114,64 +123,67 @@ def offer_letter_page():
         st.session_state.page = "main"
         st.rerun()
 
-    st.title("📨 Offer Letter Generator")
-    st.markdown("### Create Professional Offer Letters")
+    st.title("📊 Performance Review Generator")
+    st.markdown("### Generate Comprehensive Performance Reviews")
 
-    with st.form("offer_letter_form"):
+    with st.form("performance_review_form"):
         col1, col2 = st.columns(2)
         
         with col1:
-            name = st.text_input("Candidate Name *", placeholder="e.g., John Doe")
-            position = st.text_input("Position *", placeholder="e.g., Senior Software Engineer")
-            department = st.text_input("Department *", placeholder="e.g., Engineering")
-            start_date = st.date_input("Start Date *")
+            employee_name = st.text_input("Employee Name *", placeholder="e.g., John Doe")
+            position = st.text_input("Position *", placeholder="e.g., Software Engineer")
+            review_period = st.text_input("Review Period *", placeholder="e.g., Jan 2024 - Dec 2024")
         
         with col2:
-            salary = st.number_input("Annual Salary (LPA) *", min_value=0.0, step=1.0)
-            location = st.selectbox("Work Location *", ["On-site", "Hybrid", "Remote", "Flexible"])
-            reporting_to = st.text_input("Reporting Manager", placeholder="e.g., Jane Smith")
+            rating = st.slider("Performance Rating", 1, 10, 7)
+            
+        achievements = st.text_area("Key Achievements *", 
+                                  placeholder="Enter achievements (one per line)")
+        skills = st.text_area("Skills Assessment *", 
+                             placeholder="Enter skills (one per line)")
+        goals = st.text_area("Future Goals *", 
+                            placeholder="Enter goals (one per line)")
         
-        additional_benefits = st.text_area("Additional Benefits", placeholder="List additional perks and benefits")
-        special_terms = st.text_area("Special Terms & Conditions", placeholder="Any special terms or conditions")
-        
-        model_choice = st.session_state.get("model_choice", "default_model")
-        submit_button = st.form_submit_button("Generate Offer Letter", type="primary")
+        model_choice = st.session_state.get("model_choice", "bytical_mini")
+        submit_button = st.form_submit_button("Generate Performance Review", type="primary")
 
     if submit_button:
-        if not all([name, position, department, start_date, salary, location]):
+        if not all([employee_name, position, review_period, achievements, skills, goals]):
             st.error("Please fill in all required fields marked with *")
             return
 
-        with st.spinner("Generating offer letter..."):
-            try:
-                payload = {
-                    "name": name,
-                    "position": position,
-                    "department": department,
-                    "start_date": start_date.strftime("%Y-%m-%d"),
-                    "salary": f"{salary} LPA",
-                    "location": location,
-                    "reporting_to": reporting_to,
-                    "benefits": additional_benefits,
-                    "special_terms": special_terms,
-                    "model_choice": model_choice
-                }
+        achievements_list = [x.strip() for x in achievements.split('\n') if x.strip()]
+        skills_list = [x.strip() for x in skills.split('\n') if x.strip()]
+        goals_list = [x.strip() for x in goals.split('\n') if x.strip()]
 
+        payload = {
+            "model_choice": model_choice,
+            "employee_name": employee_name,
+            "position": position,
+            "review_period": review_period,
+            "achievements": achievements_list,
+            "skills": skills_list,
+            "goals": goals_list,
+            "rating": rating
+        }
+
+        with st.spinner("Generating performance review..."):
+            try:
                 response = requests.post(
-                    "http://localhost:8000/generate_offer",
+                    "http://localhost:8000/api/v1/performance-review/generate?save_to_db=true",
                     json=payload
                 )
                 
                 if response.status_code == 200:
-                    offer_content = response.json()["content"]
-                    st.success("Offer letter generated successfully!")
+                    review_content = response.json()["content"]
+                    st.success("Performance review generated successfully!")
 
                     st.markdown("### Edit Generated Content")
                     edited_content = st.text_area(
                         "",
-                        value=offer_content,
+                        value=review_content,
                         height=400,
-                        key="editor_offer"
+                        key="editor_review"
                     )
 
                     st.markdown("### Preview")
@@ -180,17 +192,17 @@ def offer_letter_page():
                     pdf_content = convert_to_pdf(edited_content)
                     if pdf_content:
                         st.download_button(
-                            label="📑 Download Offer Letter PDF",
+                            label="📑 Download Performance Review PDF",
                             data=pdf_content,
-                            file_name=f"offer_letter_{name.lower().replace(' ', '_')}.pdf",
+                            file_name=f"performance_review_{employee_name.lower().replace(' ', '_')}.pdf",
                             mime="application/pdf",
                             key="pdf_download"
                         )
                 else:
-                    st.error("Failed to generate offer letter. Please try again.")
+                    st.error("Failed to generate performance review. Please try again.")
 
             except Exception as e:
-                st.error("An error occurred while generating the offer letter.")
+                st.error("An error occurred while generating the performance review.")
 
 if __name__ == "__main__":
-    offer_letter_page()
+    performance_review_page()
